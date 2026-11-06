@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Editar tarea - TaskFlow{% endblock %}
+
+{% block content %}
+
+<section class="panel edit-panel">
+
+    <h1>✏️ Editar tarea</h1>
+
+    <p>Modifica la información de tu actividad.</p>
+
+    <form method="POST">
+
+        <div class="form-group">
+
+            <label>Nombre de la tarea</label>
+
+            <input
+                type="text"
+                name="title"
+                value="{{ task.title }}"
+                maxlength="120"
+                required
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Descripción</label>
+
+            <textarea
+                name="description"
+                maxlength="1000"
+            >{{ task.description or '' }}</textarea>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Prioridad</label>
+
+            <select name="priority">
+
+                <option value="Alta"
+                    {% if task.priority == 'Alta' %}selected{% endif %}>
+                    Alta
+                </option>
+
+                <option value="Media"
+                    {% if task.priority == 'Media' %}selected{% endif %}>
+                    Media
+                </option>
+
+                <option value="Baja"
+                    {% if task.priority == 'Baja' %}selected{% endif %}>
+                    Baja
+                </option>
+
+            </select>
+
+        </div>
+
+        <div class="form-buttons">
+
+            <button type="submit" class="btn-primary">
+                Guardar cambios
+            </button>
+
+            <a href="{{ url_for('index') }}" class="btn-secondary">
+                Cancelar
+            </a>
+
+        </div>
+
+    </form>
+
+</section>
+
+{% endblock %}

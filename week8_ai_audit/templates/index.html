@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - TaskFlow{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+
+    <div>
+        <h1>¡Bienvenido a TaskFlow!</h1>
+        <p>Administra tus actividades de manera sencilla.</p>
+    </div>
+
+    <div class="welcome-icon">📋</div>
+
+</section>
+
+
+<!-- ESTADÍSTICAS -->
+
+<section class="stats">
+
+    <div class="stat-card">
+        <div class="stat-icon blue">📚</div>
+        <div>
+            <p>Total de tareas</p>
+            <h2>{{ stats.total or 0 }}</h2>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon orange">⏳</div>
+        <div>
+            <p>Pendientes</p>
+            <h2>{{ stats.pending or 0 }}</h2>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon green">✓</div>
+        <div>
+            <p>Completadas</p>
+            <h2>{{ stats.completed or 0 }}</h2>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- FORMULARIO PARA AGREGAR -->
+
+<section class="panel">
+
+    <h2>➕ Crear nueva tarea</h2>
+
+    <form action="{{ url_for('add_task') }}" method="POST">
+
+        <div class="form-group">
+
+            <label>Nombre de la tarea</label>
+
+            <input
+                type="text"
+                name="title"
+                placeholder="Ejemplo: Estudiar Python"
+                maxlength="120"
+                required
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Descripción</label>
+
+            <textarea
+                name="description"
+                placeholder="Describe tu tarea..."
+                maxlength="1000"
+            ></textarea>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Prioridad</label>
+
+            <select name="priority">
+
+                <option value="Alta">🔴 Alta</option>
+                <option value="Media" selected>🟡 Media</option>
+                <option value="Baja">🟢 Baja</option>
+
+            </select>
+
+        </div>
+
+        <button type="submit" class="btn-primary">
+            + Agregar tarea
+        </button>
+
+    </form>
+
+</section>
+
+
+<!-- BUSCADOR Y FILTROS -->
+
+<section class="panel">
+
+    <h2>🔎 Buscar tareas</h2>
+
+    <form method="GET" action="{{ url_for('index') }}" class="filter-form">
+
+        <input
+            type="text"
+            name="search"
+            placeholder="Buscar tarea..."
+            value="{{ search }}"
+        >
+
+        <select name="status">
+
+            <option value="all" {% if status == 'all' %}selected{% endif %}>
+                Todas
+            </option>
+
+            <option value="pending" {% if status == 'pending' %}selected{% endif %}>
+                Pendientes
+            </option>
+
+            <option value="completed" {% if status == 'completed' %}selected{% endif %}>
+                Completadas
+            </option>
+
+        </select>
+
+        <select name="priority">
+
+            <option value="all">Todas las prioridades</option>
+
+            <option value="Alta" {% if priority == 'Alta' %}selected{% endif %}>
+                Alta
+            </option>
+
+            <option value="Media" {% if priority == 'Media' %}selected{% endif %}>
+                Media
+            </option>
+
+            <option value="Baja" {% if priority == 'Baja' %}selected{% endif %}>
+                Baja
+            </option>
+
+        </select>
+
+        <button class="btn-primary" type="submit">
+            Buscar
+        </button>
+
+        <a href="{{ url_for('index') }}" class="btn-secondary">
+            Limpiar
+        </a>
+
+    </form>
+
+</section>
+
+
+<!-- LISTADO DE TAREAS -->
+
+<section class="panel">
+
+    <div class="task-header">
+        <h2>📝 Mis tareas</h2>
+        <span>{{ tasks|length }} resultados</span>
+    </div>
+
+    {% if tasks %}
+
+        <div class="task-list">
+
+            {% for task in tasks %}
+
+                <article class="task-card {% if task.completed %}completed{% endif %}">
+
+                    <div class="task-info">
+
+                        <h3>{{ task.title }}</h3>
+
+                        <p>{{ task.description or 'Sin descripción' }}</p>
+
+                        <div class="task-meta">
+
+                            <span class="priority {{ task.priority|lower }}">
+                                {{ task.priority }}
+                            </span>
+
+                            {% if task.completed %}
+                                <span class="status done">Completada</span>
+                            {% else %}
+                                <span class="status pending">Pendiente</span>
+                            {% endif %}
+
+                            <small>Creada: {{ task.created_at }}</small>
+
+                        </div>
+
+                    </div>
+
+                    <div class="task-actions">
+
+                        <form action="{{ url_for('toggle_task', id=task.id) }}"
+                              method="POST">
+
+                            <button class="btn-complete" type="submit">
+                                {% if task.completed %}
+                                    ↩ Reactivar
+                                {% else %}
+                                    ✓ Completar
+                                {% endif %}
+                            </button>
+
+                        </form>
+
+                        <a href="{{ url_for('edit_task', id=task.id) }}"
+                           class="btn-edit">
+                            ✎ Editar
+                        </a>
+
+                        <form action="{{ url_for('delete_task', id=task.id) }}"
+                              method="POST"
+                              onsubmit="return confirm('¿Estás seguro de eliminar esta tarea?')">
+
+                            <button class="btn-delete" type="submit">
+                                🗑 Eliminar
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+            <div>📭</div>
+            <h3>No hay tareas disponibles</h3>
+            <p>Agrega una nueva tarea para comenzar.</p>
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}
