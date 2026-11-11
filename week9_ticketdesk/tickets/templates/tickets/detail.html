@@ -1,0 +1,10 @@
+{% extends "tickets/base.html" %}
+{% block content %}
+<h2>Ticket #{{ ticket.pk }} &mdash; {{ ticket.title }}</h2>
+<p>Owner: {{ ticket.owner.username }} &middot; Severity: <span class="sev-{{ ticket.severity }}">{{ ticket.get_severity_display }}</span></p>
+<div class="card">{{ ticket.description }}</div>
+<form method="post" action="{% url 'ticket_delete' ticket.pk %}">
+    {% csrf_token %}
+    <button type="submit">Delete this ticket</button>
+</form>
+{% endblock %}

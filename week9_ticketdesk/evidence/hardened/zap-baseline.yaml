@@ -1,0 +1,26 @@
+﻿env:
+  contexts:
+    - name: "TicketDesk"
+      urls:
+        - "http://127.0.0.1:8000"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+
+jobs:
+  - type: spider
+    parameters:
+      context: "TicketDesk"
+      maxDuration: 1
+
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 5
+
+  - type: report
+    parameters:
+      template: "traditional-html"
+      reportDir: "C:/Users/Ivan/Downloads/W9_TicketDesk_starter/ticketdesk/evidence/hardened"
+      reportFile: "zap-baseline"
+      reportTitle: "TicketDesk - OWASP ZAP Baseline"
+      reportDescription: "Analisis pasivo de seguridad sobre TicketDesk en entorno local"

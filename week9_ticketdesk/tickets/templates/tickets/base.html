@@ -1,0 +1,26 @@
+
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>TicketDesk</title>
+  <link rel="stylesheet" href="{% static 'tickets/styles.css' %}">
+</head>
+<body>
+<header>
+  <strong>&#x1F6E1; TicketDesk</strong>
+  {% if user.is_authenticated %}
+    <a href="/">My tickets</a>
+    <a href="/tickets/new/">New</a>
+    <a href="/search/">Search</a>
+    <span class="username">{{ user.username }}</span>
+    <form method="post" action="/accounts/logout/" class="logout-form">
+      {% csrf_token %}
+      <button>Log out</button>
+    </form>
+  {% endif %}
+</header>
+<main>{% block content %}{% endblock %}</main>
+</body>
+</html>
